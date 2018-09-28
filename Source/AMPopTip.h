@@ -385,6 +385,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) CGFloat edgeMargin UI_APPEARANCE_SELECTOR;
 
+@property (nonatomic, assign) BOOL hasSafeArea UI_APPEARANCE_SELECTOR;
+
 /** Offset for the Bubble
  *
  * Holds the offset between the bubble and origin

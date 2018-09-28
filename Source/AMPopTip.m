@@ -13,6 +13,8 @@
 #import "AMPopTip+Exit.h"
 #import "AMPopTip+Animation.h"
 
+static const CGFloat NotchMargin = 30.;
+
 @interface AMPopTip()
 
 @property (nonatomic, strong) NSString *text;
@@ -149,8 +151,8 @@
         frame.size = (CGSize){self.textBounds.size.width + self.padding * 2.0 + self.edgeInsets.left + self.edgeInsets.right, self.textBounds.size.height + self.padding * 2.0 + self.edgeInsets.top + self.edgeInsets.bottom + self.arrowSize.height};
 
         CGFloat x = self.fromFrame.origin.x + self.fromFrame.size.width / 2 - frame.size.width / 2;
-        if (x < 0) { x = self.edgeMargin; }
-        if (x + frame.size.width > self.containerView.bounds.size.width) { x = self.containerView.bounds.size.width - frame.size.width - self.edgeMargin; }
+        if (x < self.leftEdgeMargin) { x = self.leftEdgeMargin; } // [NAK]
+        if (x + frame.size.width > self.containerView.bounds.size.width - self.rightEdgeMargin) { x = self.containerView.bounds.size.width - frame.size.width - self.rightEdgeMargin; }
         if (self.direction == AMPopTipDirectionDown) {
             frame.origin = (CGPoint){ x, self.fromFrame.origin.y + self.fromFrame.size.height };
         } else {
@@ -176,9 +178,9 @@
         CGFloat rightSpace = self.containerView.frame.size.width - leftSpace - frame.size.width;
         
         if (self.bubbleOffset < 0 && leftSpace < fabs(self.bubbleOffset)) {
-            self.bubbleOffset = -leftSpace + self.edgeMargin;
+			self.bubbleOffset = -leftSpace;// + self.edgeMargin; // [NAK]
         } else if (self.bubbleOffset > 0 && rightSpace < self.bubbleOffset) {
-            self.bubbleOffset = rightSpace - self.edgeMargin;
+			self.bubbleOffset = rightSpace;// - self.edgeMargin; // [NAK]
         }
         
         frame.origin.x += self.bubbleOffset;
@@ -198,8 +200,8 @@
 
         CGFloat y = self.fromFrame.origin.y + self.fromFrame.size.height / 2 - frame.size.height / 2;
 
-        if (y < 0) { y = self.edgeMargin; }
-        if (y + frame.size.height > self.containerView.bounds.size.height) { y = self.containerView.bounds.size.height - frame.size.height - self.edgeMargin; }
+        if (y < self.edgeMargin) { y = self.edgeMargin; } // [NAK]
+        if (y + frame.size.height > self.containerView.bounds.size.height - self.edgeMargin) { y = self.containerView.bounds.size.height - frame.size.height - self.edgeMargin; }
         frame.origin = (CGPoint){ x, y };
         
         // Make sure that the bubble doesn't leaves the boundaries of the view
@@ -335,6 +337,12 @@
     [self.borderColor setStroke];
     [path setLineWidth:self.borderWidth];
     [path stroke];
+	
+	// тень у миникарточки - TODO: вынести в производный класс [NAK]
+	self.layer.shadowPath = path.CGPath;
+	self.layer.shadowOpacity = 0.3;
+	self.layer.shadowOffset = CGSizeZero;
+	self.layer.shadowRadius = 3.;
 
     self.paragraphStyle.alignment = self.textAlignment;
 
@@ -513,7 +521,7 @@
   
 - (void)updateAttributedText:(NSAttributedString *)text {
     self.attributedText = text;
-    self.accessibilityLabel = [text string];
+    self.accessibilityLabel = text;
     [self updateBubble];
 }
   
@@ -551,6 +559,18 @@
 
     [_swipeRemoveGesture removeTarget:self action:@selector(swipeRemoveGestureHandler)];
     _swipeRemoveGesture = nil;
+}
+
+// [NAK]
+- (CGFloat)rightEdgeMargin
+{
+	return self.edgeMargin + ((self.hasSafeArea && [UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeLeft) ? NotchMargin : 0.);
+}
+
+// [NAK]
+- (CGFloat)leftEdgeMargin
+{
+	return self.edgeMargin + ((self.hasSafeArea && [UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeRight) ? NotchMargin : 0.);
 }
 
 @end
