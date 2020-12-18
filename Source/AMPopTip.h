@@ -379,11 +379,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) NSTimeInterval actionDelayOut UI_APPEARANCE_SELECTOR;
 
-/** Margin from the left efge
+/** Margins from the left, top, right, bottom edges
  *
- * CGfloat value that determines the leftmost margin from the screen
+ * Holds margins from the screen
  */
-@property (nonatomic, assign) CGFloat edgeMargin UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) UIEdgeInsets edgeMargins UI_APPEARANCE_SELECTOR;
 
 @property (nonatomic, assign) BOOL hasSafeArea UI_APPEARANCE_SELECTOR;
 

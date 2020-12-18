@@ -93,7 +93,7 @@ static const CGFloat NotchMargin = 30.;
     _animationIn = kDefaultAnimationIn;
     _animationOut = kDefaultAnimationOut;
     _shouldDismissOnTapOutside = YES;
-    _edgeMargin = kDefaultEdgeMargin;
+    _edgeMargins = UIEdgeInsetsMake(kDefaultEdgeMargin, kDefaultEdgeMargin, kDefaultEdgeMargin, kDefaultEdgeMargin);
     _edgeInsets = kDefaultEdgeInsets;
     _rounded = NO;
     _offset = kDefaultOffset;
@@ -170,7 +170,7 @@ static const CGFloat NotchMargin = 30.;
         } else if (self.bubbleOffset < 0 && frame.size.width < fabs(self.bubbleOffset)) {
             self.bubbleOffset = -(arrowPosition.x - self.arrowSize.width);
         } else if (self.bubbleOffset < 0 && (frame.origin.x - arrowPosition.x) < fabs(self.bubbleOffset)) {
-            self.bubbleOffset = -(self.arrowSize.width + self.edgeMargin);
+            self.bubbleOffset = -(self.arrowSize.width + self.edgeMargins.left); // [NAK] ???
         }
         
         // Make sure that the bubble doesn't leaves the boundaries of the view
@@ -178,9 +178,9 @@ static const CGFloat NotchMargin = 30.;
         CGFloat rightSpace = self.containerView.frame.size.width - leftSpace - frame.size.width;
         
         if (self.bubbleOffset < 0 && leftSpace < fabs(self.bubbleOffset)) {
-			self.bubbleOffset = -leftSpace;// + self.edgeMargin; // [NAK]
+			self.bubbleOffset = -leftSpace;// + self.edgeMargins.left; // [NAK]
         } else if (self.bubbleOffset > 0 && rightSpace < self.bubbleOffset) {
-			self.bubbleOffset = rightSpace;// - self.edgeMargin; // [NAK]
+			self.bubbleOffset = rightSpace;// - self.edgeMargins.right; // [NAK]
         }
         
         frame.origin.x += self.bubbleOffset;
@@ -200,8 +200,8 @@ static const CGFloat NotchMargin = 30.;
 
         CGFloat y = self.fromFrame.origin.y + self.fromFrame.size.height / 2 - frame.size.height / 2;
 
-        if (y < self.edgeMargin) { y = self.edgeMargin; } // [NAK]
-        if (y + frame.size.height > self.containerView.bounds.size.height - self.edgeMargin) { y = self.containerView.bounds.size.height - frame.size.height - self.edgeMargin; }
+        if (y < self.edgeMargins.top) { y = self.edgeMargins.top; } // [NAK]
+        if (y + frame.size.height > self.containerView.bounds.size.height - self.edgeMargins.bottom) { y = self.containerView.bounds.size.height - frame.size.height - self.edgeMargins.bottom; }
         frame.origin = (CGPoint){ x, y };
         
         // Make sure that the bubble doesn't leaves the boundaries of the view
@@ -220,9 +220,9 @@ static const CGFloat NotchMargin = 30.;
         CGFloat bottomSpace = self.containerView.frame.size.height - topSpace - frame.size.height;
         
         if (self.bubbleOffset < 0 && topSpace < fabs(self.bubbleOffset)) {
-            self.bubbleOffset = -topSpace + self.edgeMargin;
+            self.bubbleOffset = -topSpace + self.edgeMargins.top;
         } else if (self.bubbleOffset > 0 && bottomSpace < self.bubbleOffset) {
-            self.bubbleOffset = bottomSpace - self.edgeMargin;
+            self.bubbleOffset = bottomSpace - self.edgeMargins.bottom;
         }
         
         frame.origin.y += self.bubbleOffset;
@@ -564,13 +564,13 @@ static const CGFloat NotchMargin = 30.;
 // [NAK]
 - (CGFloat)rightEdgeMargin
 {
-	return self.edgeMargin + ((self.hasSafeArea && [UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeLeft) ? NotchMargin : 0.);
+	return self.edgeMargins.right + ((self.hasSafeArea && [UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeLeft) ? NotchMargin : 0.);
 }
 
 // [NAK]
 - (CGFloat)leftEdgeMargin
 {
-	return self.edgeMargin + ((self.hasSafeArea && [UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeRight) ? NotchMargin : 0.);
+	return self.edgeMargins.left + ((self.hasSafeArea && [UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeRight) ? NotchMargin : 0.);
 }
 
 @end
